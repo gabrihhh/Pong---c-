@@ -7,9 +7,6 @@ struct Body {
     int y;
     int w;
     int h;
-};
-
-struct Moviment {
     bool up;
     bool down;
     bool left;
@@ -20,17 +17,15 @@ int main()
 {
     // Criar a janela principal
     sf::RenderWindow window(sf::VideoMode(800, 500), "SFML window");
+
     // Inicialização
-    // Aqui você pode inicializar seus objetos, carregar texturas, sons, etc
-    Body player1 = {30,10,20,100};
-    Moviment movimentPlayer1 = {false,false,false,false};
 
-    Body player2 = {720,10,20,100};
-    Moviment movimentPlayer2 = {false,false,false,false};
+    // Aqui você pode inicializar seus objetos.
+    Body player1 = {30,10,20,100,false,false,false,false};;
+    Body player2 = {720,10,20,100,false,false,false,false};
+    Body ball = {390,220,20,20,false,false,false,false};
 
-    Body ball = {390,220,20,20};
-    Moviment movimentBall = {false,false,false,false};
-
+    // Aqui você pode inicializar suas texturas e cores.
     sf::RectangleShape rectanglePlayer1;
     rectanglePlayer1.setSize(sf::Vector2f(player1.w, player1.h));
     rectanglePlayer1.setFillColor(sf::Color::Black);
@@ -58,40 +53,73 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-            
-            //Eventos de keyDown
-            if(event.type == sf::Event::KeyPressed){
-                if (event.key.code == sf::Keyboard::Up) {
-                    movimentPlayer1.up = true;
-                };
-                if (event.key.code == sf::Keyboard::Down) {
-                    movimentPlayer1.down = true;
-                };
-            };
-            //Eventos de keyUP
+    
+            //================================Eventos de keyUP===========================================
             if (event.type == sf::Event::KeyReleased)
             {
+                //Movimentação de keyup do player 1
                 if (event.key.code == sf::Keyboard::Up)
                 {
-                    movimentPlayer1.up = false;
+                    player1.up = false;
                 };
                 if (event.key.code == sf::Keyboard::Down)
                 {
-                    movimentPlayer1.down = false;
+                    player1.down = false;
+                };
+
+                //Movimentação de keyup do player2
+                if (event.key.code == sf::Keyboard::W)
+                {
+                    player2.up = false;
+                };
+                if (event.key.code == sf::Keyboard::S)
+                {
+                    player2.down = false;
                 };
             };
         }
 
-        // Atualizar o estado do jogo
-        if(movimentPlayer1.up){
+
+        //================================Eventos de KeyDown===========================================
+
+        //Movimentação de keydown do player 1
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+            player1.up = true;
+        };
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+            player1.down = true;
+        };
+
+        //Movimentação de keydown do player 2
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+            player2.up = true;
+        };
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+            player2.down = true;
+        };
+
+        //================================Atualiza o estado do jogo========================================
+
+        //movimentação player1
+        if(player1.up){
             player1.y--;
         };
-        if(movimentPlayer1.down){
+        if(player1.down){
             player1.y++;
         };
 
-        // Aqui você pode adicionar a lógica para movimentar objetos, detectar colisões, etc.
+        //movimentação player2
+        if(player2.up){
+            player2.y--;
+        };
+        if(player2.down){
+            player2.y++;
+        };
 
+        //================================Colisões e lógica===========================================
+
+        //Colisões player 1
         if(player1.y<0){
             player1.y = 0;
         };
@@ -99,9 +127,11 @@ int main()
             player1.y = 500-player1.h;
         };
 
+        //colisões player 2
+
         //Atualização das posições
         rectanglePlayer1.setPosition(player1.x,player1.y);
-
+        rectanglePlayer2.setPosition(player2.x,player2.y);
 
         // Renderização
         window.clear(sf::Color::White);
