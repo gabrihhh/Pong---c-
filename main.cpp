@@ -1,12 +1,14 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Transformable.hpp>
+#include <SFML/Window/VideoMode.hpp>
 
 struct Body {
-    int x;
-    int y;
-    int w;
-    int h;
+    float x;
+    float y;
+    float w;
+    float h;
+    float v;
     bool up;
     bool down;
     bool left;
@@ -21,11 +23,12 @@ int main()
     // Inicialização
 
     // Aqui você pode inicializar seus objetos.
-    Body player1 = {30,10,20,100,false,false,false,false};;
-    Body player2 = {720,10,20,100,false,false,false,false};
-    Body ball = {390,220,20,20,false,false,false,false};
-
+   
+    Body player1 = {720,10,20,100,1,false,false,false,false};
+    Body player2 = {30,10,20,100,1,false,false,false,false};
+    Body ball = {390,220,20,20,0.2,false,false,false,true};
     // Aqui você pode inicializar suas texturas e cores.
+
     sf::RectangleShape rectanglePlayer1;
     rectanglePlayer1.setSize(sf::Vector2f(player1.w, player1.h));
     rectanglePlayer1.setFillColor(sf::Color::Black);
@@ -41,8 +44,6 @@ int main()
     rectangleBall.setSize(sf::Vector2f(ball.w, ball.h));
     rectangleBall.setFillColor(sf::Color::Black);
     rectangleBall.setPosition(ball.x,ball.y);
-
-
 
     // Loop principal do jogo
     while (window.isOpen())
@@ -103,18 +104,32 @@ int main()
 
         //movimentação player1
         if(player1.up){
-            player1.y--;
+            player1.y -= player1.v;
         };
         if(player1.down){
-            player1.y++;
+            player1.y+=player1.v;
         };
 
         //movimentação player2
         if(player2.up){
-            player2.y--;
+            player2.y -= player2.v;
         };
         if(player2.down){
-            player2.y++;
+            player2.y += player2.v;
+        };
+
+        //movimentação da bola
+        if(ball.up){
+          ball.y -= ball.v;
+        };
+        if(ball.down){
+          ball.y += ball.v;
+        };
+        if(ball.left){
+            ball.x -= ball.v;
+        };
+        if(ball.right){
+          ball.x += ball.v  ;
         };
 
         //================================Colisões e lógica===========================================
@@ -128,10 +143,41 @@ int main()
         };
 
         //colisões player 2
+        if(player2.y<0){
+            player2.y = 0;
+        };
+        if(player2.y+player2.h>500){
+            player2.y = 500-player2.h;
+        };
+
+        //colisões da bola com o player 1
+        if(ball.x+ball.w >= player1.x){
+            if(ball.y >= player1.y && ball.y <= player1.y+player1.h){
+                ball.right=false;
+                ball.left=true;
+            }
+            if(ball.y+ball.h >=player1.y && ball.y+ball.h <= player1.y+player1.h){
+                ball.right=false;
+                ball.left=true;
+            };
+        };
+
+        //colisões da bola com o player 2
+        if(ball.x <= player2.x+player2.w){
+            if(ball.y >= player2.y && ball.y <= player2.y+player2.h){
+                ball.left=false;
+                ball.right=true;
+            }
+            if(ball.y+ball.h >=player2.y && ball.y+ball.h <= player2.y+player2.h){
+                ball.left=false;
+                ball.right=true;
+            };
+        };
 
         //Atualização das posições
         rectanglePlayer1.setPosition(player1.x,player1.y);
         rectanglePlayer2.setPosition(player2.x,player2.y);
+        rectangleBall.setPosition(ball.x,ball.y);
 
         // Renderização
         window.clear(sf::Color::White);
