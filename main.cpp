@@ -18,15 +18,19 @@ struct Body {
 int main()
 {
     // Criar a janela principal
-    sf::RenderWindow window(sf::VideoMode(800, 500), "SFML window");
-
+    sf::RenderWindow window(sf::VideoMode(800, 500), "Pong", sf::Style::Titlebar | sf::Style::Close);
+    sf::Font font;
+    if (!font.loadFromFile("./font/Roboto-Medium.ttf")) {
+        return -1;
+    }
     // Inicialização
 
     // Aqui você pode inicializar seus objetos.
-   
+    int player1Points = 0;
+    int player2Points = 0;
     Body player1 = {720,190,20,100,0.2,false,false,false,false};
     Body player2 = {30,190,20,100,0.2,false,false,false,false};
-    Body ball = {390,220,2,2,0.2,false,false,false,false};
+    Body ball = {390,220,5,5,0.2,false,false,true,false};
     // Aqui você pode inicializar suas texturas e cores.
 
     sf::RectangleShape rectanglePlayer1;
@@ -45,6 +49,21 @@ int main()
     rectangleBall.setFillColor(sf::Color::Black);
     rectangleBall.setPosition(ball.x,ball.y);
 
+    sf::Text textPoint1;
+    textPoint1.setFont(font);
+    textPoint1.setCharacterSize(24);
+    textPoint1.setFillColor(sf::Color::Black);
+    textPoint1.setPosition(200, 10);
+    textPoint1.setString(std::to_string(player1Points));
+
+    sf::Text textPoint2;
+    textPoint2.setFont(font);
+    textPoint2.setCharacterSize(24);
+    textPoint2.setFillColor(sf::Color::Black);
+    textPoint2.setPosition(600, 10);
+    textPoint2.setString(std::to_string(player2Points));
+
+
     // Loop principal do jogo
     while (window.isOpen())
     {
@@ -52,9 +71,10 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) {
                 window.close();
-    
+            };
+
             //================================Eventos de keyUP===========================================
             if (event.type == sf::Event::KeyReleased)
             {
@@ -101,6 +121,10 @@ int main()
         };
 
         //================================Atualiza o estado do jogo========================================
+
+        if(player1Points > 4 || player2Points > 4){
+            window.close();
+        };
 
         //movimentação player1
         if(player1.up){
@@ -204,11 +228,23 @@ int main()
             ball.up=true;
         }
 
+        //lógica
+        //ponto player 2
+        if(ball.x+ball.w>player1.x + 1){
+            player2Points+=1;
+            ball = {390,220,5,5,0.2,false,false,false,true};
+        };
+        //ponto player 1
+        if(ball.x<player2.x+player2.w - 1){
+            player1Points+=1;
+            ball = {390,220,5,5,0.2,false,false,true,false};
+        };
         //Atualização das posições
         rectanglePlayer1.setPosition(player1.x,player1.y);
         rectanglePlayer2.setPosition(player2.x,player2.y);
         rectangleBall.setPosition(ball.x,ball.y);
-
+        textPoint1.setString(std::to_string(player1Points));
+        textPoint2.setString(std::to_string(player2Points));
         // Renderização
         window.clear(sf::Color::White);
         
@@ -216,10 +252,13 @@ int main()
         window.draw(rectanglePlayer1);
         window.draw(rectanglePlayer2);
         window.draw(rectangleBall);
+        window.draw(textPoint1);
+        window.draw(textPoint2);
+
         // Aqui você pode desenhar seus objetos, textos, etc.
         
         window.display();
     }
-
     return 0;
 }
+
