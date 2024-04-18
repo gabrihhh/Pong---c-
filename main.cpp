@@ -24,9 +24,9 @@ int main()
 
     // Aqui você pode inicializar seus objetos.
    
-    Body player1 = {720,10,20,100,1,false,false,false,false};
-    Body player2 = {30,10,20,100,1,false,false,false,false};
-    Body ball = {390,220,20,20,0.2,false,false,false,true};
+    Body player1 = {720,190,20,100,0.2,false,false,false,false};
+    Body player2 = {30,190,20,100,0.2,false,false,false,false};
+    Body ball = {390,220,2,2,0.2,false,false,false,false};
     // Aqui você pode inicializar suas texturas e cores.
 
     sf::RectangleShape rectanglePlayer1;
@@ -152,27 +152,57 @@ int main()
 
         //colisões da bola com o player 1
         if(ball.x+ball.w >= player1.x){
-            if(ball.y >= player1.y && ball.y <= player1.y+player1.h){
-                ball.right=false;
-                ball.left=true;
-            }
-            if(ball.y+ball.h >=player1.y && ball.y+ball.h <= player1.y+player1.h){
-                ball.right=false;
-                ball.left=true;
+            if((ball.y+(ball.h/2))<(player1.y+(player1.h/3)) && (ball.y+(ball.h/2)) >= player1.y){
+                ball.right = false;
+                ball.left = true;
+                ball.up = true;
+                ball.down = false;
+            };
+            if((ball.y+(ball.h/2)) <= (player1.y+(player1.h/3)*2) && (ball.y+(ball.h/2)) >= (player1.y+(player1.h/3))){
+                ball.right = false;
+                ball.left = true;
+                ball.up = false;
+                ball.down = false;
+            };
+            if((ball.y+(ball.h/2)) <= (player1.y+player1.h) && (ball.y+(ball.h/2)) > (player1.y+(player1.h/3*2))){
+                ball.right = false;
+                ball.left = true;
+                ball.up = false;
+                ball.down = true;
             };
         };
 
         //colisões da bola com o player 2
         if(ball.x <= player2.x+player2.w){
-            if(ball.y >= player2.y && ball.y <= player2.y+player2.h){
-                ball.left=false;
-                ball.right=true;
-            }
-            if(ball.y+ball.h >=player2.y && ball.y+ball.h <= player2.y+player2.h){
-                ball.left=false;
-                ball.right=true;
+            if((ball.y+(ball.h/2))<(player2.y+(player2.h/3)) && (ball.y+(ball.h/2)) >= player2.y){
+                ball.right = true;
+                ball.left = false;
+                ball.up = true;
+                ball.down = false;
+            };
+            if((ball.y+(ball.h/2)) <= (player2.y+(player2.h/3)*2) && (ball.y+(ball.h/2)) >= (player2.y+(player2.h/3))){
+                ball.right = true;
+                ball.left = false;
+                ball.up = false;
+                ball.down = false;
+            };
+            if((ball.y+(ball.h/2)) <= (player2.y+player2.h) && (ball.y+(ball.h/2)) > (player2.y+(player2.h/3*2))){
+                ball.right = true;
+                ball.left = false;
+                ball.up = false;
+                ball.down = true;
             };
         };
+
+        //colisão da bola com o mapa
+        if(ball.y<=0){
+            ball.up=false;
+            ball.down=true;
+        }
+        if(ball.y+ball.h>=500){
+            ball.down=false;
+            ball.up=true;
+        }
 
         //Atualização das posições
         rectanglePlayer1.setPosition(player1.x,player1.y);
